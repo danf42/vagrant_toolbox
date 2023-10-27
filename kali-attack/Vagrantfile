@@ -1,0 +1,39 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# All Vagrant configuration is done below. The "2" in Vagrant.configure
+# configures the configuration version (we support older styles for
+# backwards compatibility). Please don't change it unless you know what
+# you're doing.
+Vagrant.configure("2") do |config|
+
+  # Provision kali box
+  config.vm.define "kali" do |kali|
+
+    # Every Vagrant development environment requires a box. You can search for
+    # boxes at https://vagrantcloud.com/search.
+    kali.vm.box = "kali-attack"
+
+    # Set hostname
+    kali.vm.hostname = "kali-attack"
+
+    kali.vm.disk :disk, size: "20GB", primary: false, name: "storage"
+
+    kali.vm.provider "vmware_desktop" do |v|
+      # Display the VMware GUI when booting the machine
+      v.gui = true
+
+      # Set to stop error message from displaying
+      v.allowlist_verified = true
+
+      # Customize the amount of memory on the VM:
+      v.vmx["memsize"] = "4096"
+
+      # Customize the number of CPUs
+      v.vmx["numvcpus"] = "2"
+
+      # Set provider name
+      v.vmx["displayName"] = "kali-attack"
+    end
+  end
+end

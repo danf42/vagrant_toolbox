@@ -1,0 +1,45 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# All Vagrant configuration is done below. The "2" in Vagrant.configure
+# configures the configuration version (we support older styles for
+# backwards compatibility). Please don't change it unless you know what
+# you're doing.
+Vagrant.configure("2") do |config|
+
+  # Provision Windows 10 x64 
+  config.vm.define "windows" do |windows|
+
+    # Every Vagrant development environment requires a box. You can search for
+    # boxes at https://vagrantcloud.com/search.
+    windows.vm.box = "win10x64"
+
+    windows.vm.guest         = :windows
+    windows.vm.communicator  = "winrm"
+    windows.winrm.username   = "vagrant"
+    windows.winrm.password   = "vagrant"
+    windows.vm.boot_timeout  = 600
+    windows.vm.network :forwarded_port, guest: 3389, host: 3389
+    windows.vm.network :forwarded_port, guest: 5985, host: 5985, id: "winrm", auto_correct: true
+
+    # Set hostname
+    windows.vm.hostname = "win10x64-base"
+
+    windows.vm.provider "vmware_desktop" do |v|
+      # Display the VMware GUI when booting the machine
+      v.gui = true
+
+      # Set to stop error message from displaying
+      v.allowlist_verified = true
+
+      # Customize the amount of memory on the VM:
+      v.vmx["memsize"] = "4096"
+
+      # Customize the number of CPUs
+      v.vmx["numvcpus"] = "2"
+
+      # Set provider name
+      v.vmx["displayName"] = "win10x64_base"
+    end
+  end
+end

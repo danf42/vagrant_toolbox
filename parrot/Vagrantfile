@@ -1,0 +1,52 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# All Vagrant configuration is done below. The "2" in Vagrant.configure
+# configures the configuration version (we support older styles for
+# backwards compatibility). Please don't change it unless you know what
+# you're doing.
+Vagrant.configure("2") do |config|
+
+  # Provision parrot box
+  config.vm.define "parrot" do |parrot|
+
+    # Every Vagrant development environment requires a box. You can search for
+    # boxes at https://vagrantcloud.com/search.
+    parrot.vm.box = "parrot"
+
+    # Set hostname
+    parrot.vm.hostname = "parrot-attack"
+
+    # Set VM Guest OS Type
+    parrot.vm.guest = "debian"
+
+    # Upload the provisioner script to the guest machine
+    parrot.vm.provision "file", 
+    source: "provisioner/attack.sh", 
+    destination: "/tmp/provisioner.sh"
+
+    # Execute the provisioner script
+    parrot.vm.provision "shell",
+    inline: "sudo /bin/bash /tmp/provisioner.sh"
+
+    # Reboot the box after provisioning
+    parrot.vm.provision :reload
+	
+    parrot.vm.provider "vmware_desktop" do |v|
+      # Display the VMware GUI when booting the machine
+      v.gui = true
+
+      # Set to stop error message from displaying
+      v.allowlist_verified = true
+
+      # Customize the amount of memory on the VM:
+      v.vmx["memsize"] = "4096"
+
+      # Customize the number of CPUs
+      v.vmx["numvcpus"] = "2"
+
+      # Set provider name
+      v.vmx["displayName"] = "parrot-attack"
+    end
+  end
+end
